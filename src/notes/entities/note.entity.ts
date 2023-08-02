@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToOne,
 } from 'typeorm';
 import { BaseEntity } from '../../common/base-entity.entity';
@@ -19,8 +20,11 @@ export class Note extends BaseEntity {
   @Column()
   content: string;
 
-  @Column()
+  @Column('boolean', { default: false })
   isArchived: boolean;
+
+  @Column()
+  categoryId: number;
 
   @ManyToOne(() => Category, (category) => category.notes)
   category: Category;
