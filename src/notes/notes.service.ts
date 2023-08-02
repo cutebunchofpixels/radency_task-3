@@ -20,7 +20,10 @@ export class NotesService implements INotesService {
       content: createNoteDto.content,
     });
 
-    return await this.notesRepo.save(newNote);
+    const saved = await this.notesRepo.save(newNote);
+    saved.parseDates();
+
+    return saved;
   }
 
   async findAll() {
@@ -28,7 +31,7 @@ export class NotesService implements INotesService {
   }
 
   async findOne(id: number): Promise<Note> {
-    return await this.notesRepo.findOne({
+    return await this.notesRepo.findOneOrFail({
       where: {
         id,
       },
@@ -37,8 +40,12 @@ export class NotesService implements INotesService {
 
   async update(id: number, updateNoteDto: UpdateNoteDto) {
     const note = await this.findOne(id);
+    Object.assign(note, updateNoteDto);
 
-    return await this.notesRepo.save({ ...note, ...updateNoteDto });
+    const saved = await this.notesRepo.save(note);
+    saved.parseDates();
+
+    return saved;
   }
 
   async remove(id: number) {
