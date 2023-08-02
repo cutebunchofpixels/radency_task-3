@@ -21,27 +21,27 @@ export class NotesController {
   ) {}
 
   @Post()
-  create(@Body() createNoteDto: CreateNoteDto) {
-    return this.notesService.create(createNoteDto);
+  async create(@Body() createNoteDto: CreateNoteDto) {
+    return await this.notesService.create(createNoteDto);
   }
 
   @Get()
-  findAll() {
-    return this.notesService.findAll();
+  async findAll() {
+    return await this.notesService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.notesService.findOne(id);
+  async findOne(@Param('id') id: number) {
+    return await this.notesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateNoteDto: UpdateNoteDto) {
-    return this.notesService.update(id, updateNoteDto);
+  async update(@Param('id') id: number, @Body() updateNoteDto: UpdateNoteDto) {
+    return await this.notesService.update(id, updateNoteDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.notesService.remove(id);
+  async remove(@Param('id') id: number) {
+    return await this.notesService.remove(id);
   }
 }
