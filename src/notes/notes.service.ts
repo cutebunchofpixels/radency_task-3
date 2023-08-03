@@ -27,7 +27,9 @@ export class NotesService implements INotesService {
   }
 
   async findAll() {
-    return await this.notesRepo.find();
+    return await this.notesRepo.find({
+      relations: ['category'],
+    });
   }
 
   async findOne(id: number): Promise<Note> {
@@ -35,6 +37,7 @@ export class NotesService implements INotesService {
       where: {
         id,
       },
+      relations: ['category'],
     });
   }
 
