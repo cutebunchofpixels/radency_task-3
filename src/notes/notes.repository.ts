@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, Repository } from 'typeorm';
-import { GENERIC_REPO_INJECTION_TOKEN } from './constants';
 import {
   NotesStatsDto,
   RawStatsQueryResult,
@@ -12,7 +12,7 @@ import { INotesRepository } from './interfaces/notes-repository.interface';
 @Injectable()
 export class NotesRepositry implements INotesRepository {
   constructor(
-    @Inject(GENERIC_REPO_INJECTION_TOKEN)
+    @InjectRepository(Note)
     private readonly genericRepository: Repository<Note>,
   ) {}
 

@@ -17,7 +17,7 @@ export function mapFromRawQueryResult(item: RawStatsQueryResult) {
   const mapped: NotesStatsDto = {
     category: {
       id: item['note_category_id'],
-      value: item['category_name'],
+      value: item['category_value'],
     },
     amountActive: item['amount_active'],
     amountArchived: item['amount_archived'],
