@@ -1,59 +1,57 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { NOTES_REPO_INJECTION_TOKEN } from './constants';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
-import { Repository } from 'typeorm';
 import { Note } from './entities/note.entity';
-import { NOTES_REPO_INJECTION_TOKEN } from './constants';
 import { INotesService } from './interfaces/notes-service.interface';
+import { INotesRepository } from './interfaces/notes-repository.interface';
+import { NotesStatsDto } from './dto/notes-stats.dto';
 
 @Injectable()
 export class NotesService implements INotesService {
   constructor(
     @Inject(NOTES_REPO_INJECTION_TOKEN)
-    private readonly notesRepo: Repository<Note>,
+    private readonly notesRepo: INotesRepository,
   ) {}
 
-  async create(createNoteDto: CreateNoteDto) {
-    const newNote = this.notesRepo.create({
+  async create(createNoteDto: CreateNoteDto): Promise<Note> {
+    const newNote = this.notesRepo.instantiateEntity({
       categoryId: createNoteDto.categoryId,
       name: createNoteDto.name,
       content: createNoteDto.content,
     });
 
-    const saved = await this.notesRepo.save(newNote);
+    const saved = await this.notesRepo.create(newNote);
     saved.parseDates();
 
     return saved;
   }
 
-  async findAll() {
-    return await this.notesRepo.find({
-      relations: ['category'],
-    });
+  async getAll(): Promise<Note[]> {
+    return await this.notesRepo.getAll();
   }
 
-  async findOne(id: number): Promise<Note> {
-    return await this.notesRepo.findOneOrFail({
-      where: {
-        id,
-      },
-      relations: ['category'],
-    });
+  async getById(id: number): Promise<Note> {
+    return await this.notesRepo.getById(id);
   }
 
-  async update(id: number, updateNoteDto: UpdateNoteDto) {
-    const note = await this.findOne(id);
+  async update(id: number, updateNoteDto: UpdateNoteDto): Promise<Note> {
+    const note = await this.getById(id);
     Object.assign(note, updateNoteDto);
 
-    const saved = await this.notesRepo.save(note);
+    const saved = await this.notesRepo.update(note);
     saved.parseDates();
 
     return saved;
   }
 
-  async remove(id: number) {
-    const note = await this.findOne(id);
+  async remove(id: number): Promise<Note> {
+    const note = await this.getById(id);
 
     return this.notesRepo.remove(note);
+  }
+
+  async getStats(): Promise<NotesStatsDto[]> {
+    return await this.notesRepo.getStats();
   }
 }
