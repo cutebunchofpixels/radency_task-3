@@ -20,7 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrations:generate": "npx typeorm-ts-node-esm migration:generate",
     "migrations:run": "npx typeorm-ts-node-commonjs migration:run",
-    "migrations:revert": "npx typeorm-ts-node-commonjs migration:revert" 
+    "migrations:revert": "npx typeorm-ts-node-commonjs migration:revert",
+    "seed": "npx ts-node"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -38,6 +39,7 @@
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
