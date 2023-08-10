@@ -1,23 +1,10 @@
-import { DataSource } from 'typeorm';
-import { Category } from '../../categories/entites/categoty.entity';
 import 'dotenv/config';
-
+import { Category } from '../../categories/entites/categoty.entity';
+import { initializeDataSource } from '../initializeDataSource';
 const TABLE_NAME = 'category';
 
-const dataSource = new DataSource({
-  host: process.env.DB_HOST,
-  type: 'postgres',
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  entities: ['src/**/**.entity{.ts,.js}'],
-  migrations: ['src/database/migrations/*.ts'],
-  synchronize: false,
-  name: 'seed',
-});
-
-async function seed(dataSource: DataSource): Promise<void> {
+async function seed(): Promise<void> {
+  const dataSource = initializeDataSource('seed-category');
   await dataSource.initialize();
 
   const categories: Category[] = [];
@@ -33,4 +20,4 @@ async function seed(dataSource: DataSource): Promise<void> {
   await repo.save<Category>(categories);
 }
 
-seed(dataSource);
+seed();

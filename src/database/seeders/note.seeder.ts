@@ -1,25 +1,13 @@
-import { DataSource } from 'typeorm';
-import { Note } from '../../notes/entities/note.entity';
-import { CreateNoteDto } from '../../notes/dto/create-note.dto';
 import { faker } from '@faker-js/faker';
 import 'dotenv/config';
+import { CreateNoteDto } from '../../notes/dto/create-note.dto';
+import { Note } from '../../notes/entities/note.entity';
+import { initializeDataSource } from '../initializeDataSource';
 
 const TABLE_NAME = 'note';
 
-const dataSource = new DataSource({
-  host: process.env.DB_HOST,
-  type: 'postgres',
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  entities: ['src/**/**.entity{.ts,.js}'],
-  migrations: ['src/database/migrations/*.ts'],
-  synchronize: false,
-  name: 'seed',
-});
-
-async function seed(dataSource: DataSource): Promise<void> {
+async function seed(): Promise<void> {
+  const dataSource = initializeDataSource('seed-note');
   await dataSource.initialize();
 
   const notes: Note[] = [];
@@ -42,4 +30,4 @@ async function seed(dataSource: DataSource): Promise<void> {
   await repo.save<Note>(notes);
 }
 
-seed(dataSource);
+seed();
