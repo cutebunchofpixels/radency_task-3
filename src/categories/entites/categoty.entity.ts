@@ -1,12 +1,13 @@
-import { Column, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from '../../common/base-entity.entity';
-import { Note } from '../../notes/entities/note.entity';
+import { AllowNull, Column, HasMany, Model, Table } from 'sequelize-typescript';
+import Note from '../../notes/entities/note.entity';
+import { DataTypes } from 'sequelize';
 
-@Entity()
-export class Category extends BaseEntity {
-  @Column()
+@Table({ tableName: 'category', timestamps: false })
+export default class Category extends Model {
+  @AllowNull(false)
+  @Column(DataTypes.TEXT)
   value: string;
 
-  @OneToMany(() => Note, (note) => note.category)
+  @HasMany(() => Note)
   notes: Note[];
 }

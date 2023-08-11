@@ -1,42 +1,50 @@
 import {
-  AfterLoad,
+  AllowNull,
+  BelongsTo,
   Column,
-  CreateDateColumn,
-  Entity,
-  JoinTable,
-  ManyToOne,
-} from 'typeorm';
-import { BaseEntity } from '../../common/base-entity.entity';
-import { Category } from '../../categories/entites/categoty.entity';
+  CreatedAt,
+  Default,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import Category from '../../categories/entites/categoty.entity';
+import { DataTypes } from 'sequelize';
 
-@Entity()
-export class Note extends BaseEntity {
-  @Column()
+@Table({ tableName: 'note', updatedAt: false, deletedAt: false })
+export default class Note extends Model {
+  @AllowNull(false)
+  @Column(DataTypes.TEXT)
   name: string;
 
-  @CreateDateColumn()
+  @AllowNull(false)
+  @CreatedAt
+  @Column
   creationDate: Date;
 
-  @Column()
+  @AllowNull(false)
+  @Column(DataTypes.TEXT)
   content: string;
 
-  @Column('boolean', { default: false })
+  @Default(false)
+  @AllowNull(false)
+  @Column
   isArchived: boolean;
 
-  @Column()
+  @AllowNull(false)
+  @ForeignKey(() => Category)
+  @Column
   categoryId: number;
 
-  @ManyToOne(() => Category, (category) => category.notes)
+  @BelongsTo(() => Category)
   category: Category;
 
-  dates: string[];
-
-  @AfterLoad()
-  parseDates() {
+  @Column(DataTypes.VIRTUAL)
+  get dates(): string[] {
     const dateRegex =
       /(0?[1-9]|[1-2][0-9]|3[0-1])\/(0?[1-9]|1[0-2])\/([0-9]{4})/g;
     const dates = this.content.match(dateRegex) || [];
 
-    this.dates = dates;
+    return dates;
   }
 }

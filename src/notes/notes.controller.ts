@@ -13,7 +13,7 @@ import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { NOTES_SERVICE_INJECTION_TOKEN } from './constants';
 import { INotesService } from './interfaces/notes-service.interface';
-import { Note } from './entities/note.entity';
+import Note from './entities/note.entity';
 import { NotesStatsDto } from './dto/notes-stats.dto';
 
 @Controller('notes')

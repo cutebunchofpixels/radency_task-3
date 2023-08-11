@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { NOTES_REPO_INJECTION_TOKEN } from './constants';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
-import { Note } from './entities/note.entity';
+import Note from './entities/note.entity';
 import { INotesService } from './interfaces/notes-service.interface';
 import { INotesRepository } from './interfaces/notes-repository.interface';
 import { NotesStatsDto } from './dto/notes-stats.dto';
@@ -22,7 +22,6 @@ export class NotesService implements INotesService {
     });
 
     const saved = await this.notesRepo.create(newNote);
-    saved.parseDates();
 
     return saved;
   }
@@ -40,7 +39,6 @@ export class NotesService implements INotesService {
     Object.assign(note, updateNoteDto);
 
     const saved = await this.notesRepo.update(note);
-    saved.parseDates();
 
     return saved;
   }

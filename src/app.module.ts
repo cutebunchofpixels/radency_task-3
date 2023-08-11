@@ -1,23 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NotesModule } from './notes/notes.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     NotesModule,
-    TypeOrmModule.forRootAsync({
+    SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
-        type: 'postgres',
+        dialect: 'postgres',
         host: config.get<string>('POSTGRES_HOST'),
         port: config.get<number>('POSTGRES_PORT'),
         username: config.get<string>('POSTGRES_USER'),
         password: config.get<string>('POSTGRES_PASSWORD'),
         database: config.get<string>('POSTGRES_DB'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        migrations: [__dirname + './database/migrations'],
+        models: [__dirname + '/**/*.entity{.ts,.js}'],
       }),
       inject: [ConfigService],
     }),

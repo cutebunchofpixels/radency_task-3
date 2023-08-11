@@ -1,82 +1,68 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeepPartial, Repository } from 'typeorm';
-import {
-  NotesStatsDto,
-  RawStatsQueryResult,
-  mapFromRawQueryResult,
-} from './dto/notes-stats.dto';
-import { Note } from './entities/note.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { Sequelize } from 'sequelize';
+import Category from 'src/categories/entites/categoty.entity';
+import { NotesStatsDto } from './dto/notes-stats.dto';
+import Note from './entities/note.entity';
 import { INotesRepository } from './interfaces/notes-repository.interface';
 
 @Injectable()
 export class NotesRepositry implements INotesRepository {
   constructor(
-    @InjectRepository(Note)
-    private readonly genericRepository: Repository<Note>,
+    @InjectModel(Note)
+    private readonly noteModel: typeof Note,
   ) {}
 
-  instantiateEntity(partial: DeepPartial<Note>): Note {
-    return this.genericRepository.create(partial);
+  instantiateEntity(partial: Partial<Note>): Note {
+    return this.noteModel.build(partial);
   }
 
   async getById(id: number): Promise<Note> {
-    return await this.genericRepository.findOneOrFail({
+    return await this.noteModel.findOne({
       where: {
         id,
       },
-      relations: ['category'],
+      include: Category,
+      rejectOnEmpty: true,
     });
   }
 
   async getAll(): Promise<Note[]> {
-    return await this.genericRepository.find({
-      relations: ['category'],
-    });
+    return await this.noteModel.findAll({ include: Category });
   }
   async create(entity: Note): Promise<Note> {
-    return await this.genericRepository.save(entity);
+    return await entity.save();
   }
 
   async update(entity: Note): Promise<Note> {
-    return await this.genericRepository.save(entity);
+    const saved = await entity.save();
+
+    return saved;
   }
 
   async remove(entity: Note): Promise<Note> {
-    return await this.genericRepository.remove(entity);
+    await entity.destroy({});
+    return entity;
   }
 
   async getStats(): Promise<NotesStatsDto[]> {
-    const queryBuilder = this.genericRepository.createQueryBuilder('note');
-
-    const categoryIdAlias: keyof RawStatsQueryResult = 'note_category_id';
-    const categoryValueAlias: keyof RawStatsQueryResult = 'category_value';
-    const amountActiveAlias: keyof RawStatsQueryResult = 'amount_active';
-    const amountArchived: keyof RawStatsQueryResult = 'amount_archived';
-
-    const rawQueryResult: RawStatsQueryResult[] = await queryBuilder
-      .select('note.categoryId', categoryIdAlias)
-      .addSelect('category.value', categoryValueAlias)
-      .addSelect(
-        'COUNT(CASE WHEN "isArchived" IS TRUE THEN 1 END)',
-        amountArchived,
-      )
-      .addSelect(
-        'COUNT(CASE WHEN "isArchived" IS FALSE THEN 1 END)',
-        amountActiveAlias,
-      )
-      .leftJoin('category', 'category', 'note.categoryId = category.id')
-      .groupBy('note.categoryId')
-      .addGroupBy('category.value')
-      .getRawMany();
-
-    const stats: NotesStatsDto[] = [];
-
-    for (const item of rawQueryResult) {
-      const statsRecord = mapFromRawQueryResult(item);
-
-      stats.push(statsRecord);
-    }
+    const stats = (await this.noteModel.findAll({
+      attributes: [
+        [
+          Sequelize.literal('COUNT(CASE WHEN "isArchived" IS TRUE THEN 1 END)'),
+          'amountArchived',
+        ],
+        [
+          Sequelize.literal(
+            'COUNT(CASE WHEN "isArchived" IS FALSE THEN 1 END)',
+          ),
+          'amountActive',
+        ],
+      ],
+      include: [{ model: Category, attributes: ['id', 'value'], right: true }],
+      group: ['category.id', 'category.value'],
+      raw: false,
+    })) as unknown as NotesStatsDto[];
 
     return stats;
   }

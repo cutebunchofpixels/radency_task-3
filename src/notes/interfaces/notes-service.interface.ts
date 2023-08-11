@@ -1,7 +1,7 @@
 import { CreateNoteDto } from '../dto/create-note.dto';
 import { NotesStatsDto } from '../dto/notes-stats.dto';
 import { UpdateNoteDto } from '../dto/update-note.dto';
-import { Note } from '../entities/note.entity';
+import Note from '../entities/note.entity';
 
 export interface INotesService {
   create(createNoteDto: CreateNoteDto): Promise<Note>;

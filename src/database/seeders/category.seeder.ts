@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Category } from '../../categories/entites/categoty.entity';
+import Category from '../../categories/entites/categoty.entity';
 import { initializeDataSource } from '../initializeDataSource';
 const TABLE_NAME = 'category';
 

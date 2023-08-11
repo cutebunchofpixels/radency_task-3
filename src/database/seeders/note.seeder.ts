@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import 'dotenv/config';
 import { CreateNoteDto } from '../../notes/dto/create-note.dto';
-import { Note } from '../../notes/entities/note.entity';
+import Note from '../../notes/entities/note.entity';
 import { initializeDataSource } from '../initializeDataSource';
 
 const TABLE_NAME = 'note';
