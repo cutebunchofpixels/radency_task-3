@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config/dist';
 import { ValidationPipe } from '@nestjs/common';
-import { TypeORMFilter } from './database/typeorm.filter';
+import { SequelizeFilter } from './database/sequelize.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,7 +17,7 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalFilters(new TypeORMFilter());
+  app.useGlobalFilters(new SequelizeFilter());
 
   await app.listen(config.get<number>('APPLICATION_PORT'));
 }
