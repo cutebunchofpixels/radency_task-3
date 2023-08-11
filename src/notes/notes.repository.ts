@@ -31,13 +31,16 @@ export class NotesRepositry implements INotesRepository {
     return await this.noteModel.findAll({ include: Category });
   }
   async create(entity: Note): Promise<Note> {
-    return await entity.save();
+    const created = await entity.save();
+
+    //also include category
+    const createdWithRelations = await this.getById(created.id);
+
+    return createdWithRelations;
   }
 
   async update(entity: Note): Promise<Note> {
-    const saved = await entity.save();
-
-    return saved;
+    return await entity.save();
   }
 
   async remove(entity: Note): Promise<Note> {
