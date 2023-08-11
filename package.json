@@ -21,7 +21,9 @@
     "migrations:generate": "npx sequelize-cli migration:create",
     "migrations:run": "npx sequelize-cli db:migrate",
     "migrations:revert": "npx sequelize-cli db:migrate:undo",
-    "seed": "npx ts-node"
+    "seed:generate": "npx sequelize-cli seed:generate",
+    "seed:run": "npx sequelize-cli db:seed:all",
+    "seed:revert": "npx sequelize-cli db:seed:undo:all"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
