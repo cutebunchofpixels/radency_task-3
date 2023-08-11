@@ -1,5 +1,4 @@
-npm run migrations:run -- -d ./ormconfig.ts
-npm run seed -- ./src/database/seeders/category.seeder.ts
-npm run seed -- ./src/database/seeders/note.seeder.ts
+npm run migrations:run
+npm run seed:run
 
-node ./dist/src/main.js
+node ./dist/main.js
